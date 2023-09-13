@@ -11,6 +11,7 @@
 ### 3.对TCP/Socket整体流程尚未理解透彻
 该项目都是参考网络上的实现写的，让我自己只看流程图写我也写不出来，所以打算再看看为什么这样设计
 ### 4.缺乏GUI
+### 5.只能在Linux环境下运行
 
 ## 参考资料
 https://www.geeksforgeeks.org/socket-programming-cc/
