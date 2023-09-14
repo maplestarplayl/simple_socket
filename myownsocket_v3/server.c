@@ -10,100 +10,73 @@
 
 #define PORT 8000
 #define BUFFER_SIZE 1024
-
-int createSocket();
-void bindSocket(int socket_fd);
-void startListening(int socket_fd);
-int acceptConnection(int socket_fd);
-void handleCommunication(int new_socket_fd);
-void sendMessage(int socket_fd, const char *message);
+int initSocket(); // return the new socket_fd(client)
+char *handleCommunication(int new_socket_fd, char *buffer);
+void sendMessage(int socket_fd, char *message);
 void receiveMessage(int socket_fd, char *buffer, int buffer_size);
 
-int main(int argc, char *argv[])
+int initSocket()
 {
     int socket_fd, new_socket_fd;
-
-    socket_fd = createSocket();
-    bindSocket(socket_fd);
-    startListening(socket_fd);
-
-    new_socket_fd = acceptConnection(socket_fd);
-    printf("Connected to the client successfully\n");
-
-    handleCommunication(new_socket_fd);
-
-    close(new_socket_fd);
-    close(socket_fd);
-
-    return 0;
-}
-
-int createSocket()
-{
-    int socket_fd = socket(AF_INET, SOCK_STREAM, 0);
+    struct sockaddr_in address;
+    // 1.Create the socket file descriptor and exit if fails
+    socket_fd = socket(AF_INET, SOCK_STREAM, 0);
     if (socket_fd == -1)
     {
         perror("socket create failed");
-        exit(1);
+        exit(1); // fail exit
     }
-    return socket_fd;
-}
-
-void bindSocket(int socket_fd)
-{
-    struct sockaddr_in address;
+    // Intialize the memory
     memset(&address, '0', sizeof(address));
+    address.sin_family = AF_INET;         // Use IP Protocol
+    address.sin_addr.s_addr = INADDR_ANY; // Internet Address
+    address.sin_port = htons(PORT);       // port
 
-    address.sin_family = AF_INET;
-    address.sin_addr.s_addr = INADDR_ANY;
-    address.sin_port = htons(PORT);
-
+    // 3.Attaching socket to the port 8000
     if (bind(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
         exit(1);
     }
-}
-
-void startListening(int socket_fd)
-{
     if (listen(socket_fd, 5) < 0)
     {
         perror("listen failed");
         exit(1);
     }
-}
-
-int acceptConnection(int socket_fd)
-{
-    int new_socket_fd = accept(socket_fd, NULL, NULL);
-    if (new_socket_fd == -1)
+    if ((new_socket_fd = accept(socket_fd, NULL, NULL)) == -1)
     {
         perror("accept failed");
         exit(1);
     }
+    printf("Connect to the client successfully\n");
     return new_socket_fd;
 }
-
-void handleCommunication(int new_socket_fd)
+int main(int argc, char *argv[])
 {
-    char buffer[BUFFER_SIZE];
+    int socket_fd, new_socket_fd;
+    new_socket_fd = initSocket();
+    printf("Connected to the client successfully\n");
 
-    while (1)
-    {
-        printf("Please input the message you want to send: ");
-        fgets(buffer, sizeof(buffer), stdin);
-        buffer[strcspn(buffer, "\n")] = '\0';
-        // Put the buffer(String) into an array
-        sendMessage(new_socket_fd, buffer);
-        receiveMessage(new_socket_fd, buffer, sizeof(buffer));
+    char buffer[] = "hi";
+    handleCommunication(new_socket_fd, buffer);
 
-        printf("Received message: %s\n", buffer);
-        memset(buffer, '\0', sizeof(buffer));
-    }
+    close(new_socket_fd);
+    return 0;
 }
 
-void sendMessage(int socket_fd, const char *message)
+char *handleCommunication(int new_socket_fd, char *buffer)
+{
+    printf("Please input the message you want to send: ");
+    fgets(buffer, sizeof(buffer), stdin);
+    buffer[strcspn(buffer, "\n")] = '\0';
+    // Put the buffer(String) into an array
+    sendMessage(new_socket_fd, buffer);
+    receiveMessage(new_socket_fd, buffer, sizeof(buffer));
+    printf("Received message: %s\n", buffer);
+    return buffer;
+}
+
+void sendMessage(int socket_fd, char *message)
 {
     if (send(socket_fd, message, strlen(message), 0) == -1)
     {
