@@ -10,14 +10,16 @@
 
 #define PORT 8000
 #define BUFFER_SIZE 1024
-int initSocket(); // return the new socket_fd(client)
-char *handleCommunication(int new_socket_fd, char *buffer);
+void closeSocket(int socket_fd);
+int *initSocket(); // return the new socket_fd(client)
+void handleCommunication(int new_socket_fd, char *buffer);
 void sendMessage(int socket_fd, char *message);
 void receiveMessage(int socket_fd, char *buffer, int buffer_size);
 
-int initSocket()
+int *initSocket()
 {
     int socket_fd, new_socket_fd;
+    int *socketArr = malloc(sizeof(int) * 2);
     struct sockaddr_in address;
     // 1.Create the socket file descriptor and exit if fails
     socket_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -49,12 +51,14 @@ int initSocket()
         exit(1);
     }
     printf("Connect to the client successfully\n");
-    return new_socket_fd;
+    socketArr[0] = socket_fd;
+    socketArr[1] = new_socket_fd;
+    return socketArr;
 }
 int main(int argc, char *argv[])
 {
     int socket_fd, new_socket_fd;
-    new_socket_fd = initSocket();
+    new_socket_fd = initSocket()[1];
     printf("Connected to the client successfully\n");
 
     char buffer[] = "hi";
@@ -64,16 +68,19 @@ int main(int argc, char *argv[])
     return 0;
 }
 
-char *handleCommunication(int new_socket_fd, char *buffer)
+void closeSocket(int socket_fd)
 {
-    printf("Please input the message you want to send: ");
-    fgets(buffer, sizeof(buffer), stdin);
+    close(socket_fd);
+}
+void handleCommunication(int new_socket_fd, char *buffer)
+{
+    // printf("Please input the message you want to send: ");
+    // fgets(buffer, sizeof(buffer), stdin);
     buffer[strcspn(buffer, "\n")] = '\0';
     // Put the buffer(String) into an array
     sendMessage(new_socket_fd, buffer);
     receiveMessage(new_socket_fd, buffer, sizeof(buffer));
     printf("Received message: %s\n", buffer);
-    return buffer;
 }
 
 void sendMessage(int socket_fd, char *message)
