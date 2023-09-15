@@ -19,18 +19,23 @@ window = sg.Window('Chat window', layout, font=('Helvetica', ' 13'), default_but
 
 while True:     # The Event Loop
     event, value = window.read()
-    if event in (sg.WIN_CLOSED, 'EXIT'):            # quit if exit button or X
+    if event in (sg.WIN_CLOSED, 'EXIT'):
+        close_socket(socket_fd,1)     
+        close_socket(new_socket_fd,0)
+        print('has been closed')       # quit if exit button or X
         break
     if event == 'Connect':                          # Start the server socket
         py_socket_arr = sc.init_socket()
         socket_fd = py_socket_arr[0]
         new_socket_fd = py_socket_arr[1]
+        #print(socket_fd)
+        #print(new_socket_fd)
     if event == 'SEND':
         send_msg = value['-QUERY-'].rstrip()
         buffer_send_msg = send_msg.encode()
         # EXECUTE YOUR COMMAND HERE
-        print('The message you send was {}'.format(send_msg), flush=True)
+        print('The message you send was: {}'.format(send_msg), flush=True)
         receive_msg = sc.handle_communication(new_socket_fd,buffer_send_msg)
-        print('The message you get was{}'.format(receive_msg.decode()),flush=True)
+        print('The message you get was: {}'.format(receive_msg.decode()),flush=True)
 
 window.close()
