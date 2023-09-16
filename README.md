@@ -1,4 +1,4 @@
-# 使用C实现了一个简易的socket（其实就是调用<sys/socket.h>的函数）
+# 使用C和Cython实现了一个简易的对话软件（其实就是socket+GUI）
 ## v3 & v3.5
 ### 新增特性
 #### 1.能够通过GUI进行交互（Server端）(Remember to press the connect Button)
