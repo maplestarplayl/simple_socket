@@ -1,5 +1,6 @@
 import PySimpleGUI as sg
 import server_cython as sc
+import time
 
 '''
 A simple send/response chat window.  Add call to your send-routine and print the response
@@ -20,9 +21,10 @@ window = sg.Window('Chat window', layout, font=('Helvetica', ' 13'), default_but
 while True:     # The Event Loop
     event, value = window.read()
     if event in (sg.WIN_CLOSED, 'EXIT'):
-        close_socket(socket_fd,1)     
-        close_socket(new_socket_fd,0)
-        print('has been closed')       # quit if exit button or X
+        sc.close_socket(socket_fd,1)     
+        sc.close_socket(new_socket_fd,0)
+        print('socket has been closed')       # quit if exit button or X
+        time.sleep(3)
         break
     if event == 'Connect':                          # Start the server socket
         py_socket_arr = sc.init_socket()
