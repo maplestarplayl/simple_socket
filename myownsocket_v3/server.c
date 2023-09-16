@@ -10,7 +10,7 @@
 
 #define PORT 8000
 #define BUFFER_SIZE 1024
-void closeSocket(int socket_fd,int is_server_socket_fd);
+void closeSocket(int socket_fd);
 int *initSocket(); // return the new socket_fd(client)
 void handleCommunication(int new_socket_fd, char *buffer);
 void sendMessage(int socket_fd, char *message);
@@ -67,17 +67,10 @@ int main(int argc, char *argv[])
     close(new_socket_fd);
     return 0;
 }
-//close if second argu is 0, shutdown if second argu is else
-void closeSocket(int socket_fd,int is_server_socket_fd)
+// Close the entire socket instead of shutdown
+void closeSocket(int socket_fd)
 {
-    if (is_server_socket_fd == 0)
-    {
-        close(socket_fd);
-    }
-    else
-    {
-        shutdown(socket_fd,SHUT_RDWR);
-    }
+    close(socket_fd);
 }
 void handleCommunication(int new_socket_fd, char *buffer)
 {

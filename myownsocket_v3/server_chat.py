@@ -21,8 +21,8 @@ window = sg.Window('Chat window', layout, font=('Helvetica', ' 13'), default_but
 while True:     # The Event Loop
     event, value = window.read()
     if event in (sg.WIN_CLOSED, 'EXIT'):
-        sc.close_socket(socket_fd,1)     
-        sc.close_socket(new_socket_fd,0)
+        sc.close_socket(socket_fd)     
+        sc.close_socket(new_socket_fd)
         print('socket has been closed')       # quit if exit button or X
         time.sleep(3)
         break

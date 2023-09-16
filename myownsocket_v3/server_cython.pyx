@@ -6,11 +6,11 @@ from libc.string cimport strcpy, strlen
 cdef extern from "server.c":
     int* initSocket()
     void handleCommunication(int new_socket_fd,char *buffer)
-    void closeSocket(int socket_fd,int is_server_socket_fd)
+    void closeSocket(int socket_fd)
 
-def close_socket(int socket_fd,int is_server_socket_fd):
-    print("i'm closing")
-    return closeSocket(socket_fd,is_server_socket_fd)
+def close_socket(int socket_fd):
+    print("i'm closing socket")
+    return closeSocket(socket_fd)
 #Main func: start the socket and wait for the msg to send and receive the msg
 #Maybe multithread???
 #return the msg sent by the client
