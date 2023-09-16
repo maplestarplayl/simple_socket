@@ -28,13 +28,15 @@ int *initSocket()
         perror("socket create failed");
         exit(1); // fail exit
     }
+    int reuse = 1;
+    setsockopt(socket_fd, SOL_SOCKET, SO_REUSEADDR, &reuse, sizeof(reuse));
     // Intialize the memory
     memset(&address, '0', sizeof(address));
     address.sin_family = AF_INET;         // Use IP Protocol
     address.sin_addr.s_addr = INADDR_ANY; // Internet Address
     address.sin_port = htons(PORT);       // port
-
-    // 3.Attaching socket to the port 8000
+    //bind(socket_fd, (struct sockaddr *)&address, sizeof(address));
+    //3.Attaching socket to the port 8000
     if (bind(socket_fd, (struct sockaddr *)&address, sizeof(address)) < 0)
     {
         perror("bind failed");
@@ -70,7 +72,9 @@ int main(int argc, char *argv[])
 // Close the entire socket instead of shutdown
 void closeSocket(int socket_fd)
 {
+    printf("Ready to close the socket\n");
     close(socket_fd);
+    printf("Close successfully\n");
 }
 void handleCommunication(int new_socket_fd, char *buffer)
 {

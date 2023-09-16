@@ -23,7 +23,7 @@ while True:     # The Event Loop
     if event in (sg.WIN_CLOSED, 'EXIT'):
         sc.close_socket(socket_fd)     
         sc.close_socket(new_socket_fd)
-        print('socket has been closed')       # quit if exit button or X
+        print('socket has been closed',flush=True)       # quit if exit button or X
         time.sleep(3)
         break
     if event == 'Connect':                          # Start the server socket
