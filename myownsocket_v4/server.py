@@ -20,17 +20,27 @@ import socket
 def initialize_server():
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     server_socket.bind(('127.0.0.1', 8888))
-    server_socket.listen(1)
+    server_socket.listen()
     print('Server is running on 127.0.0.1:8888')
     conn, addr = server_socket.accept()
     print(f'The connect from {addr} has been established')
     return conn
 
 
-def send_msg(conn, msg):
+async def send_msg(conn, msg="123"):
+    asyncio.sleep(3)
     conn.send(msg.encode('utf-8'))
+    print(f"You send msg {msg}")
 
 
 async def read_msg(conn):
     request = await (conn.recv(255).decode('utf8'))
-    return request
+    # return request
+    print(f"You get msg {request}")
+
+
+async def main():
+    conn = initialize_server()
+    asyncio.gather(send_msg(conn), read_msg(conn))
+
+asyncio.run(main())
